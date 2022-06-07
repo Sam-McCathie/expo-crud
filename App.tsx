@@ -1,16 +1,34 @@
-import {StyleSheet, Text, View, SafeAreaView} from 'react-native';
+import React, {useState} from 'react';
+import {StyleSheet, Text, View, SafeAreaView, FlatList} from 'react-native';
 import Task from './components/Task';
 import TaskInput from './components/TaskInput';
 
+export type TaskSchema = {
+  id: string;
+  task: string;
+  complete: boolean;
+};
+
 export default function App() {
+  const [tasks, setTasks] = useState<TaskSchema[]>([]);
+
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.heading}>Today's Tasks</Text>
       <View style={styles.tasks}>
-        <Task name={'yes'} />
-        <Task name={'no'} />
+        {tasks.length > 0 ? (
+          <FlatList
+            keyExtractor={item => item.id}
+            data={tasks}
+            renderItem={({item}) => (
+              <Task id={item.id} task={item.task} complete={item.complete} />
+            )}
+          />
+        ) : (
+          <Text>No tasks added yet..</Text>
+        )}
       </View>
-      <TaskInput />
+      <TaskInput tasks={tasks} setTasks={setTasks} />
     </SafeAreaView>
   );
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -7,9 +7,30 @@ import {
   TouchableOpacity,
   Text,
   StyleSheet,
+  Alert,
 } from 'react-native';
+import {TaskSchema} from '../App';
 
-const TaskInput: React.FC = () => {
+type Props = {
+  tasks: TaskSchema[];
+  setTasks: React.Dispatch<React.SetStateAction<TaskSchema[]>>;
+};
+
+const TaskInput: React.FC<Props> = ({tasks, setTasks}) => {
+  const [task, setTask] = useState<string>('');
+
+  const createNewTask = () => {
+    if (task.length > 0) {
+      setTasks([
+        ...tasks,
+        {id: Date.now().toString(), task: task, complete: false},
+      ]);
+      setTask('');
+    } else {
+      Alert.alert('Please add a task.');
+    }
+  };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -18,11 +39,14 @@ const TaskInput: React.FC = () => {
         <TextInput
           placeholder="Add task here"
           style={[styles.taskInput, styles.taskInputComponentShadow]}
+          onChangeText={input => setTask(input)}
+          value={task}
         />
 
         <TouchableOpacity
           activeOpacity={0.6}
-          style={[styles.taskAdd, styles.taskInputComponentShadow]}>
+          style={[styles.taskAdd, styles.taskInputComponentShadow]}
+          onPress={createNewTask}>
           <Text>+</Text>
         </TouchableOpacity>
       </View>

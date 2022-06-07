@@ -1,17 +1,13 @@
 import React from 'react';
 import {Text, View, StyleSheet, TouchableOpacity} from 'react-native';
+import {TaskSchema} from '../App';
 
-type Task = {
-  name: string;
-  complete?: boolean;
-};
-
-const Task: React.FC<Task> = props => {
-  const {name} = props;
+const Task: React.FC<TaskSchema> = props => {
+  const {task, complete} = props;
   return (
     <View style={styles.task}>
       <TouchableOpacity style={styles.completeToggle}></TouchableOpacity>
-      <Text>I am a tasks - {name}</Text>
+      <Text>{task}</Text>
     </View>
   );
 };
@@ -23,7 +19,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderColor: '#F7F7F7',
     marginBottom: 10,
-    width: '80%',
+    width: 310, // works fine if not %
     padding: 15,
     display: 'flex',
     flexDirection: 'row',
