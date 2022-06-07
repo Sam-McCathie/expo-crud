@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -18,6 +18,7 @@ type Props = {
 
 const TaskInput: React.FC<Props> = ({tasks, setTasks}) => {
   const [task, setTask] = useState<string>('');
+  const taskInputElement = useRef<TextInput>(null);
 
   const createNewTask = () => {
     if (task.length > 0) {
@@ -26,6 +27,7 @@ const TaskInput: React.FC<Props> = ({tasks, setTasks}) => {
         {id: Date.now().toString(), task: task, complete: false},
       ]);
       setTask('');
+      taskInputElement.current?.blur();
     } else {
       Alert.alert('Please add a task.');
     }
@@ -41,6 +43,7 @@ const TaskInput: React.FC<Props> = ({tasks, setTasks}) => {
           style={[styles.taskInput, styles.taskInputComponentShadow]}
           onChangeText={input => setTask(input)}
           value={task}
+          ref={taskInputElement}
         />
 
         <TouchableOpacity
