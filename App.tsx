@@ -11,6 +11,7 @@ export type TaskSchema = {
 
 export default function App() {
   const [tasks, setTasks] = useState<TaskSchema[]>([]);
+  console.log(tasks);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -21,7 +22,13 @@ export default function App() {
             keyExtractor={item => item.id}
             data={tasks}
             renderItem={({item}) => (
-              <Task id={item.id} task={item.task} complete={item.complete} />
+              <Task
+                tasks={tasks}
+                setTasks={setTasks}
+                id={item.id}
+                task={item.task}
+                complete={item.complete}
+              />
             )}
           />
         ) : (
