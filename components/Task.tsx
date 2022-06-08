@@ -46,6 +46,10 @@ const Task: React.FC<TaskSchema & Props> = props => {
     }
   };
 
+  const deleteTask = () => {
+    setTasks(tasks.filter(task => task.id !== id));
+  };
+
   return (
     <View style={styles.taskComponents}>
       <View style={styles.task}>
@@ -65,7 +69,6 @@ const Task: React.FC<TaskSchema & Props> = props => {
             <Text>S</Text>
           </TouchableOpacity>
         )}
-        {/* <View style={styles.taskLayout}> */}
         {!editing ? (
           <Text
             style={complete ? styles.taskTextComplete : {}}
@@ -83,7 +86,9 @@ const Task: React.FC<TaskSchema & Props> = props => {
 
       {!complete &&
         (!editing ? (
-          <TouchableOpacity style={[styles.toggleBtn, styles.deleteBtn]}>
+          <TouchableOpacity
+            style={[styles.toggleBtn, styles.deleteBtn]}
+            onPress={deleteTask}>
             <Text style={styles.deleteTxt}>D</Text>
           </TouchableOpacity>
         ) : (
