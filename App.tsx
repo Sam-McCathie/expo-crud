@@ -12,6 +12,8 @@ export type TaskSchema = {
 export default function App() {
   const [tasks, setTasks] = useState<TaskSchema[]>([]);
 
+  // add a hide completed filter
+
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.heading}>Today's Tasks</Text>

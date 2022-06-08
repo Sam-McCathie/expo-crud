@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import {
   Text,
   View,
@@ -18,6 +18,7 @@ type Props = {
 
 const Task: React.FC<TaskSchema & Props> = props => {
   const {id, task, complete, tasks, setTasks} = props;
+
   const [currentTask, setCurrentTask] = useState<TaskSchema>({
     id: id,
     task: task,
@@ -25,24 +26,21 @@ const Task: React.FC<TaskSchema & Props> = props => {
   });
   const [editing, setEditing] = useState<boolean>(false);
 
-  const update = () => {
-    setTasks(tasks.map(task => (task.id === id ? currentTask : task)));
-    if (currentTask.complete)
-      setCurrentTask({...currentTask, ['complete']: false});
-  };
-
-  const editCurrentTask = (item: string, value: boolean | string) => {
+  const editTask = (item: string, value: boolean | string) => {
     setCurrentTask({...currentTask, [item]: value});
-    if (item === 'complete') update();
   };
 
   const updateTask = () => {
     if (task === currentTask.task) setEditing(false);
-    else if (currentTask.task.length > 0) {
-      update();
-      setEditing(false);
+    if (currentTask.task.length > 0) {
+      setTasks(tasks.map(task => (task.id === id ? currentTask : task)));
+      if (editing) {
+        setEditing(false);
+      }
+      if (currentTask.complete)
+        setCurrentTask({...currentTask, ['complete']: false});
     } else {
-      Alert.alert('Your task is too short :(');
+      Alert.alert('Task too short');
     }
   };
 
@@ -59,9 +57,11 @@ const Task: React.FC<TaskSchema & Props> = props => {
               styles.toggleBtn,
               !complete ? styles.incompleteBtn : styles.completeBtn,
             ]}
-            onPress={() =>
-              editCurrentTask('complete', !currentTask.complete)
-            }></TouchableOpacity>
+            onPress={() => {
+              editTask('complete', !currentTask.complete);
+              updateTask();
+              console.log('pressed');
+            }}></TouchableOpacity>
         ) : (
           <TouchableOpacity
             style={[styles.toggleBtn, styles.saveBtn]}
@@ -72,32 +72,37 @@ const Task: React.FC<TaskSchema & Props> = props => {
         {!editing ? (
           <Text
             style={complete ? styles.taskTextComplete : {}}
-            onPress={() => setEditing(!editing)}>
+            onPress={() => {
+              setEditing(!editing);
+            }}>
             {task}
           </Text>
         ) : (
           <TextInput
+            autoFocus={true}
             value={currentTask.task}
-            onChangeText={value => editCurrentTask('task', value)}
+            onChangeText={value => editTask('task', value)}
             style={styles.taskEditInput}
           />
         )}
       </View>
 
-      {!complete &&
-        (!editing ? (
-          <TouchableOpacity
-            style={[styles.toggleBtn, styles.deleteBtn]}
-            onPress={deleteTask}>
-            <Text style={styles.deleteTxt}>D</Text>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            style={[styles.toggleBtn, styles.closeBtn]}
-            onPress={() => setEditing(false)}>
-            <Text>X</Text>
-          </TouchableOpacity>
-        ))}
+      {!editing ? (
+        <TouchableOpacity
+          style={[styles.toggleBtn, styles.deleteBtn]}
+          onPress={deleteTask}>
+          <Text style={styles.deleteTxt}>D</Text>
+        </TouchableOpacity>
+      ) : (
+        <TouchableOpacity
+          style={[styles.toggleBtn, styles.closeBtn]}
+          onPress={() => {
+            setEditing(false);
+            editTask('task', task);
+          }}>
+          <Text>X</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
