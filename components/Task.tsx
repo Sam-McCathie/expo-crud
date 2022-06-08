@@ -60,7 +60,6 @@ const Task: React.FC<TaskSchema & Props> = props => {
             onPress={() => {
               editTask('complete', !currentTask.complete);
               updateTask();
-              console.log('pressed');
             }}></TouchableOpacity>
         ) : (
           <TouchableOpacity
@@ -72,9 +71,7 @@ const Task: React.FC<TaskSchema & Props> = props => {
         {!editing ? (
           <Text
             style={complete ? styles.taskTextComplete : {}}
-            onPress={() => {
-              setEditing(!editing);
-            }}>
+            onPress={() => setEditing(!editing)}>
             {task}
           </Text>
         ) : (
