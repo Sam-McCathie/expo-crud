@@ -25,10 +25,10 @@ const Task: React.FC<TaskSchema & Props> = props => {
   });
   const [editing, setEditing] = useState<boolean>(false);
 
-  console.log(tasks);
-
   const update = () => {
     setTasks(tasks.map(task => (task.id === id ? currentTask : task)));
+    if (currentTask.complete)
+      setCurrentTask({...currentTask, ['complete']: false});
   };
 
   const editCurrentTask = (item: string, value: boolean | string) => {
@@ -47,55 +47,91 @@ const Task: React.FC<TaskSchema & Props> = props => {
   };
 
   return (
-    <View style={styles.task}>
-      {!editing ? (
-        <TouchableOpacity
-          style={[
-            styles.completeToggle,
-            !complete
-              ? styles.completeToggleIncomplete
-              : styles.completeToggleComplete,
-          ]}
-          onPress={() =>
-            editCurrentTask('complete', !currentTask.complete)
-          }></TouchableOpacity>
-      ) : (
-        <TouchableOpacity
-          style={[styles.completeToggle, styles.saveToggle]}
-          onPress={updateTask}>
-          <Text>S</Text>
-        </TouchableOpacity>
-      )}
-      {!editing ? (
-        <Text
-          style={complete ? styles.taskTextComplete : {}}
-          onPress={() => setEditing(!editing)}>
-          {task}
-        </Text>
-      ) : (
-        <TextInput
-          value={currentTask.task}
-          onChangeText={value => editCurrentTask('task', value)}
-        />
-      )}
+    <View style={styles.taskComponents}>
+      <View style={styles.task}>
+        {!editing ? (
+          <TouchableOpacity
+            style={[
+              styles.toggleBtn,
+              !complete ? styles.incompleteBtn : styles.completeBtn,
+            ]}
+            onPress={() =>
+              editCurrentTask('complete', !currentTask.complete)
+            }></TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            style={[styles.toggleBtn, styles.saveBtn]}
+            onPress={updateTask}>
+            <Text>S</Text>
+          </TouchableOpacity>
+        )}
+        {/* <View style={styles.taskLayout}> */}
+        {!editing ? (
+          <Text
+            style={complete ? styles.taskTextComplete : {}}
+            onPress={() => setEditing(!editing)}>
+            {task}
+          </Text>
+        ) : (
+          <TextInput
+            value={currentTask.task}
+            onChangeText={value => editCurrentTask('task', value)}
+            style={styles.taskEditInput}
+          />
+        )}
+      </View>
+
+      {!complete &&
+        (!editing ? (
+          <TouchableOpacity style={[styles.toggleBtn, styles.deleteBtn]}>
+            <Text style={styles.deleteTxt}>D</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            style={[styles.toggleBtn, styles.closeBtn]}
+            onPress={() => setEditing(false)}>
+            <Text>X</Text>
+          </TouchableOpacity>
+        ))}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  taskComponents: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
   task: {
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
     borderRadius: 10,
     borderColor: '#F7F7F7',
-    marginBottom: 10,
     width: 310, // works fine if not %
     padding: 15,
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
   },
-  completeToggle: {
+  taskLayout: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  taskTextComplete: {
+    textDecorationLine: 'line-through',
+  },
+  taskEditInput: {
+    borderWidth: 1,
+    borderRadius: 5,
+    borderColor: 'black',
+    width: 240,
+    paddingVertical: 2,
+    paddingHorizontal: 10,
+  },
+  toggleBtn: {
     width: 24,
     height: 24,
     borderRadius: 5,
@@ -103,12 +139,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  taskTextComplete: {
-    textDecorationLine: 'line-through',
-  },
-  completeToggleComplete: {backgroundColor: 'green'},
-  completeToggleIncomplete: {backgroundColor: 'rgba(85, 188, 246, 0.4)'},
-  saveToggle: {backgroundColor: 'orange'},
+
+  completeBtn: {backgroundColor: 'green'},
+  incompleteBtn: {backgroundColor: 'rgba(85, 188, 246, 0.4)'},
+  saveBtn: {backgroundColor: 'orange'},
+  deleteBtn: {backgroundColor: 'red', marginLeft: 10},
+  deleteTxt: {color: 'white', fontWeight: '700'},
+  closeBtn: {backgroundColor: 'yellow', marginLeft: 10},
 });
 
 export default Task;

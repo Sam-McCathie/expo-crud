@@ -11,7 +11,6 @@ export type TaskSchema = {
 
 export default function App() {
   const [tasks, setTasks] = useState<TaskSchema[]>([]);
-  console.log(tasks);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -55,6 +54,6 @@ const styles = StyleSheet.create({
   },
   tasks: {
     display: 'flex',
-    alignItems: 'center',
+    marginLeft: 20,
   },
 });
